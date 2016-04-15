@@ -32,7 +32,7 @@ public class CustomViewActivity extends AppCompatActivity {
     }
 
     private void setOverScroll() {
-        overScrollLayout.setCheckListener(new OverScrollCheckListener() {
+        overScrollLayout.setOverScrollCheckListener(new OverScrollCheckListener() {
             @Override
             public int getContentViewScrollDirection() {
                 return OverScrollLayout.SCROLL_VERTICAL;

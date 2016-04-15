@@ -166,11 +166,11 @@ public class OverScrollLayout extends RelativeLayout {
         this.onOverScrollListener = onOverScrollListener;
     }
 
-    public OverScrollCheckListener getCheckListener() {
+    public OverScrollCheckListener getOverScrollCheckListener() {
         return checkListener;
     }
 
-    public void setCheckListener(OverScrollCheckListener checkListener) {
+    public void setOverScrollCheckListener(OverScrollCheckListener checkListener) {
         this.checkListener = checkListener;
     }
 
