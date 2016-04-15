@@ -6,40 +6,41 @@ HorizontalScrollView支持在他们的滚动方向上做超屏幕滑动。有自
 ![image](https://github.com/wcy10586/OverscrollLayout/blob/master/app/aaa.gif)
 
 一般的view 可以这么用
-<com.wcy.overscroll.OverScrollLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/overscroll"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_bright"
-    android:orientation="vertical">
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
-</com.wcy.overscroll.OverScrollLayout>
+
+        <com.wcy.overscroll.OverScrollLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/overscroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/holo_blue_bright"
+            android:orientation="vertical">
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></ListView>
+        </com.wcy.overscroll.OverScrollLayout>
+
+
 在Activity里面如果需要监听overScroll可以这样写
 
- private void setOverScroll(){
-        OverScrollLayout layout = (OverScrollLayout) findViewById(R.id.overscroll);
-        layout.setOnOverScrollListener(new OnOverScrollListener() {
-            @Override
-            public void onTopOverScroll() {
-                Log.i(TAG, "====onTopOverScroll=======");
-            }
-            @Override
-            public void onBottomOverScroll() {
-                Log.i(TAG,"====onBottomOverScroll=======");
-            }
-            @Override
-            public void onLeftOverScroll() {
-                Log.i(TAG,"====onLeftOverScroll=======");
-            }
-            @Override
-            public void onRightOverScroll() {
-                Log.i(TAG,"====onRightOverScroll=======");
-            }
-        });
-    }
+            overScrollLayout.setOnOverScrollListener(new OnOverScrollListener() {
+                @Override
+                public void onTopOverScroll() {
+                    Log.i(TAG, "====onTopOverScroll=======");
+                }
+                @Override
+                public void onBottomOverScroll() {
+                    Log.i(TAG,"====onBottomOverScroll=======");
+                }
+                @Override
+                public void onLeftOverScroll() {
+                    Log.i(TAG,"====onLeftOverScroll=======");
+                }
+                @Override
+                public void onRightOverScroll() {
+                    Log.i(TAG,"====onRightOverScroll=======");
+                }
+            });
+
     
     如果不需要监听，则和使用一个RelativeLayout一样简单。
     
@@ -56,55 +57,55 @@ HorizontalScrollView支持在他们的滚动方向上做超屏幕滑动。有自
       public boolean canScrollRight() ；用于判断是否已到达右边界,用于检查水平OverScroll。
       
       以为StaggeredGridView为例子，要实现它的OverScroll  那么OverScrollCheckListener 可以这么实现：
-         overScrollLayout.setOverScrollCheckListener(new OverScrollCheckListener() {
-            @Override
-            public int getContentViewScrollDirection() {
-                return OverScrollLayout.SCROLL_VERTICAL;
-            }
-            @Override
-            public boolean canOverScroll(float dealtX, float dealtY, View contentView) {
-                if (dealtY < 0 && !canScrollUp()) {
-                    return true;
+             overScrollLayout.setOverScrollCheckListener(new OverScrollCheckListener() {
+                @Override
+                public int getContentViewScrollDirection() {
+                    return OverScrollLayout.SCROLL_VERTICAL;
                 }
-                if (dealtY > 0 && !canScrollDown()) {
-                    return true;
-                }
-                return false;
-            }
-            @Override
-            public boolean canScrollUp() {
-                int fp = staggeredGridView.getFirstPosition();
-                if (fp == 0) {
-                    View child = staggeredGridView.getChildAt(0);
-                    if (child.getTop() >= staggeredGridView.getPaddingTop()) {
-                        return false;
+                @Override
+                public boolean canOverScroll(float dealtX, float dealtY, View contentView) {
+                    if (dealtY < 0 && !canScrollUp()) {
+                        return true;
                     }
+                    if (dealtY > 0 && !canScrollDown()) {
+                        return true;
+                    }
+                    return false;
                 }
-                return true;
-            }
-            @Override
-            public boolean canScrollDown() {
-                int fp = staggeredGridView.getFirstPosition();
-                int lp = staggeredGridView.getChildCount() + fp - 1;
-                if (lp == staggeredGridView.getAdapter().getCount() - 1) {
-                    int numClos = staggeredGridView.getColumnCount();
-                    int childCount = staggeredGridView.getChildCount();
-                    for (int i = 1; i <= numClos; i++) {
-                        View view = staggeredGridView.getChildAt(childCount - i);
-                        if (view.getBottom() <= staggeredGridView.getHeight() + staggeredGridView.getPaddingBottom()) {
+                @Override
+                public boolean canScrollUp() {
+                    int fp = staggeredGridView.getFirstPosition();
+                    if (fp == 0) {
+                        View child = staggeredGridView.getChildAt(0);
+                        if (child.getTop() >= staggeredGridView.getPaddingTop()) {
                             return false;
                         }
                     }
+                    return true;
                 }
-                return true;
-            }
-            @Override
-            public boolean canScrollLeft() {
-                return false;
-            }
-            @Override
-            public boolean canScrollRight() {
-                return false;
-            }
-        });
+                @Override
+                public boolean canScrollDown() {
+                    int fp = staggeredGridView.getFirstPosition();
+                    int lp = staggeredGridView.getChildCount() + fp - 1;
+                    if (lp == staggeredGridView.getAdapter().getCount() - 1) {
+                        int numClos = staggeredGridView.getColumnCount();
+                        int childCount = staggeredGridView.getChildCount();
+                        for (int i = 1; i <= numClos; i++) {
+                            View view = staggeredGridView.getChildAt(childCount - i);
+                            if (view.getBottom() <= staggeredGridView.getHeight() + staggeredGridView.getPaddingBottom()) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }
+                @Override
+                public boolean canScrollLeft() {
+                    return false;
+                }
+                @Override
+                public boolean canScrollRight() {
+                    return false;
+                }
+            });
     
