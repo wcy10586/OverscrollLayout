@@ -1,0 +1,4 @@
+# OverscrollLayout
+一个可以对任意view实现超屏幕滑动的layout.默认对AbsListView,RecyclerView,ScrollView,HorizontalScrollView,ViewPager 
+以及一般的View做了处理。ViewPager本身禁止超屏幕滑动。一般的View支持纵向滑动。AbsListView,RecyclerView,ScrollView,
+HorizontalScrollView支持在他们的滚动方向上做超屏幕滑动。有自定义的View想要支持这个功能，可以对OverScrollLayout设置OverScrollCheckListener
