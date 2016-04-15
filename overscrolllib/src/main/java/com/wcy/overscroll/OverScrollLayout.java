@@ -233,6 +233,13 @@ public class OverScrollLayout extends RelativeLayout {
                 if (prepareOverScrollVertical) {
                     if (Math.abs(dealtY) >= configuration.getScaledTouchSlop()) {
                         if (dealtY < 0 && !canChildScrollUp() || dealtY > 0 && !canChildScrollDown()) {
+                            if (onOverScrollListener != null) {
+                                if (dealtY < 0) {
+                                    onOverScrollListener.onTopOverScroll();
+                                } else if (dealtY > 0) {
+                                    onOverScrollListener.onBottomOverScroll();
+                                }
+                            }
                             ev.setAction(MotionEvent.ACTION_CANCEL);
                             super.dispatchTouchEvent(ev);
                             if (oldY == 0) {
@@ -269,6 +276,13 @@ public class OverScrollLayout extends RelativeLayout {
                 if (prepareOverScrollHorizontally) {
                     if (Math.abs(dealtX) >= configuration.getScaledTouchSlop()) {
                         if (dealtX < 0 && !canChildScrollLeft() || dealtX > 0 && !canChildScrollRight()) {
+                            if (onOverScrollListener != null) {
+                                if (dealtX < 0) {
+                                    onOverScrollListener.onLeftOverScroll();
+                                } else if (dealtX > 0) {
+                                    onOverScrollListener.onRightOverScroll();
+                                }
+                            }
                             ev.setAction(MotionEvent.ACTION_CANCEL);
                             super.dispatchTouchEvent(ev);
                             if (oldX == 0) {

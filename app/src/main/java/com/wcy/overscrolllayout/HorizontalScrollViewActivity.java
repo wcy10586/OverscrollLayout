@@ -2,7 +2,11 @@ package com.wcy.overscrolllayout;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
+
+import com.wcy.overscroll.OnOverScrollListener;
+import com.wcy.overscroll.OverScrollLayout;
 
 /**
  * Created by changyou on 2016/4/14.
@@ -16,11 +20,35 @@ public class HorizontalScrollViewActivity extends AppCompatActivity {
             "我们是空气，我们不是土地……\n" +
             "——马马达舒维利\n";
 
+    private OverScrollLayout layout;
+    private String TAG = "overscroll";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.horizontal_scroll_view);
         TextView tv = (TextView) findViewById(R.id.text);
         tv.setText(str);
+        layout = (OverScrollLayout) findViewById(R.id.overscroll);
+        layout.setOnOverScrollListener(new OnOverScrollListener() {
+            @Override
+            public void onTopOverScroll() {
+                Log.i(TAG,"====onTopOverScroll=======");
+            }
+
+            @Override
+            public void onBottomOverScroll() {
+                Log.i(TAG,"====onBottomOverScroll=======");
+            }
+
+            @Override
+            public void onLeftOverScroll() {
+                Log.i(TAG,"====onLeftOverScroll=======");
+            }
+
+            @Override
+            public void onRightOverScroll() {
+                Log.i(TAG,"====onRightOverScroll=======");
+            }
+        });
     }
 }

@@ -5,8 +5,11 @@ package com.wcy.overscroll;
  */
 public interface OnOverScrollListener {
 
-    void onTopOverScoll();
+    void onTopOverScroll();
 
     void onBottomOverScroll();
 
+    void onLeftOverScroll();
+
+    void onRightOverScroll();
 }
