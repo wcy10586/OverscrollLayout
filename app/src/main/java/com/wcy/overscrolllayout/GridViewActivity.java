@@ -2,6 +2,7 @@ package com.wcy.overscrolllayout;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;

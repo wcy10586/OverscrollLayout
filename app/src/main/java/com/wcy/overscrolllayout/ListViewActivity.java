@@ -29,6 +29,7 @@ public class ListViewActivity extends AppCompatActivity {
 
     private void setOverScroll(){
         OverScrollLayout layout = (OverScrollLayout) findViewById(R.id.overscroll);
+        layout.setFraction(0.75f);
         layout.setOnOverScrollListener(new OnOverScrollListener() {
             @Override
             public void onTopOverScroll() {

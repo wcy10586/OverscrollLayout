@@ -3,6 +3,7 @@ package com.wcy.overscrolllayout;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,22 +33,11 @@ public class CustomViewActivity extends AppCompatActivity {
     }
 
     private void setOverScroll() {
+        overScrollLayout.setFraction(1);
         overScrollLayout.setOverScrollCheckListener(new OverScrollCheckListener() {
             @Override
             public int getContentViewScrollDirection() {
                 return OverScrollLayout.SCROLL_VERTICAL;
-            }
-
-            @Override
-            public boolean canOverScroll(float dealtX, float dealtY, View contentView) {
-                if (dealtY < 0 && !canScrollUp()) {
-                    return true;
-                }
-
-                if (dealtY > 0 && !canScrollDown()) {
-                    return true;
-                }
-                return false;
             }
 
             @Override
@@ -69,11 +59,14 @@ public class CustomViewActivity extends AppCompatActivity {
                 if (lp == staggeredGridView.getAdapter().getCount() - 1) {
                     int numClos = staggeredGridView.getColumnCount();
                     int childCount = staggeredGridView.getChildCount();
+                    int bottomMax = 0;
                     for (int i = 1; i <= numClos; i++) {
                         View view = staggeredGridView.getChildAt(childCount - i);
-                        if (view.getBottom() <= staggeredGridView.getHeight() + staggeredGridView.getPaddingBottom()) {
-                            return false;
-                        }
+                        bottomMax = Math.max(bottomMax, view.getBottom());
+                    }
+
+                    if (bottomMax >= staggeredGridView.getBottom() - staggeredGridView.getPaddingBottom()) {
+                        return false;
                     }
                 }
                 return true;

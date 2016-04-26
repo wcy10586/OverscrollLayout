@@ -37,7 +37,7 @@ public class PagerViewActivity extends AppCompatActivity {
     private void setPager() {
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             if (i == 2) {
                 View view = getLayoutInflater().inflate(R.layout.page_item2, null);
                 TextView textView = (TextView) view.findViewById(R.id.text);
@@ -61,7 +61,7 @@ public class PagerViewActivity extends AppCompatActivity {
     class MyPagerAdapter extends PagerAdapter {
         @Override
         public int getCount() {
-            return views.size();
+            return Integer.MAX_VALUE;
         }
 
         @Override
@@ -71,6 +71,7 @@ public class PagerViewActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            position = Integer.MAX_VALUE % views.size();
             View view = views.get(position);
             container.addView(view);
             return view;
@@ -78,6 +79,7 @@ public class PagerViewActivity extends AppCompatActivity {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
+            position = Integer.MAX_VALUE % views.size();
             View view = views.get(position);
             container.removeView(view);
         }
