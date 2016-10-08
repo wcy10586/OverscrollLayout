@@ -442,8 +442,12 @@ public class OverScrollLayout extends RelativeLayout {
     }
 
     private float getDealt(float dealt, float distance) {
-        float temp = dealt * (1.5f - fraction - Math.abs(distance) / baseOverScrollLength) / 3;
-        return temp;
+        if (dealt * distance < 0)
+             return dealt;
+        //x 为0的时候 y 一直为0, 所以当x==0的时候,给一个0.1的最小值
+        float x = (float) Math.min(Math.max(Math.abs(distance), 0.1) / Math.abs(baseOverScrollLength), 1);
+        float y = Math.min(new AccelerateInterpolator(0.15f).getInterpolation(x), 1);
+        return dealt * (1 - y);
     }
 
     private MotionEvent resetVertical(MotionEvent event) {
