@@ -4,7 +4,8 @@
 以及一般的View做了处理。ViewPager本身禁止超屏幕滑动。一般的View支持纵向滑动。AbsListView,RecyclerView,ScrollView,
 HorizontalScrollView支持在他们的滚动方向上做超屏幕滑动。有自定义的View想要支持这个功能，可以对OverScrollLayout设置OverScrollCheckListener.也可以通过设置OnOverScrollListener来监听是否是正在做超屏幕滑动。
 ![image](https://github.com/wcy10586/OverscrollLayout/blob/master/app/aaa.gif)
-
+## v1.1.0
+   添加fling惯性。
 ##v1.01  
   1.优化OverScroll的边界的平滑度。                                                                                             
   2.添加阻力系数 setFraction(float fraction)，越拉越难拉！  
