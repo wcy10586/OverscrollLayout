@@ -13,6 +13,8 @@ import com.wcy.overscroll.OverScrollLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 /**
  * Created by changyou on 2016/4/14.

@@ -7,14 +7,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Scroller;
@@ -63,6 +68,12 @@ public class OverScrollLayout extends RelativeLayout {
     private boolean shouldSetScrollerStart;
     private boolean disallowIntercept;
 
+    private GestureDetector detector;
+
+    private FlingRunnable flingRunnable;
+    private OverScroller flingScroller;
+    private OverScrollRunnable overScrollRunnable;
+
     public OverScrollLayout(Context context) {
         super(context);
         init();
@@ -87,6 +98,20 @@ public class OverScrollLayout extends RelativeLayout {
     private void init() {
         configuration = ViewConfiguration.get(getContext());
         mScroller = new Scroller(getContext(), new OvershootInterpolator(0.75f));
+        flingRunnable = new FlingRunnable();
+        overScrollRunnable = new OverScrollRunnable();
+        flingScroller = new OverScroller(getContext());
+        detector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (isOverScrollTop || isOverScrollBottom || isOverScrollLeft || isOverScrollRight) {
+                    return false;
+                }
+//
+                flingRunnable.start(velocityX, velocityY);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -101,37 +126,8 @@ public class OverScrollLayout extends RelativeLayout {
         super.onFinishInflate();
     }
 
-    @Override
-    public void computeScroll() {
-        if (mScroller.computeScrollOffset()) {
-            int scrollerY = mScroller.getCurrY();
-            scrollTo(mScroller.getCurrX(), scrollerY);
-            postInvalidate();
-        } else {
-            if (abortScroller) {
-                abortScroller = false;
-                return;
-            }
-            if (finishOverScroll) {
-                isOverScrollTop = false;
-                isOverScrollBottom = false;
-                isOverScrollLeft = false;
-                isOverScrollRight = false;
-                finishOverScroll = false;
-            }
-        }
-    }
-
-    protected void mSmoothScrollTo(int fx, int fy) {
-        int dx = fx - mScroller.getFinalX();
-        int dy = fy - mScroller.getFinalY();
-        mSmoothScrollBy(dx, dy);
-    }
-
-
-    protected void mSmoothScrollBy(int dx, int dy) {
-        mScroller.startScroll(mScroller.getFinalX(), mScroller.getFinalY(), dx, dy);
-        invalidate();
+    public void setDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        this.disallowIntercept = disallowIntercept;
     }
 
     public boolean isTopOverScrollEnable() {
@@ -256,15 +252,49 @@ public class OverScrollLayout extends RelativeLayout {
         }
     }
 
-    public void setDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        this.disallowIntercept = disallowIntercept;
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            int scrollerY = mScroller.getCurrY();
+            scrollTo(mScroller.getCurrX(), scrollerY);
+            postInvalidate();
+        } else {
+            if (abortScroller) {
+                abortScroller = false;
+                return;
+            }
+            if (finishOverScroll) {
+                isOverScrollTop = false;
+                isOverScrollBottom = false;
+                isOverScrollLeft = false;
+                isOverScrollRight = false;
+                finishOverScroll = false;
+            }
+        }
+
     }
+
+    protected void mSmoothScrollTo(int fx, int fy) {
+        int dx = fx - mScroller.getFinalX();
+        int dy = fy - mScroller.getFinalY();
+        mSmoothScrollBy(dx, dy);
+    }
+
+
+    protected void mSmoothScrollBy(int dx, int dy) {
+        mScroller.startScroll(mScroller.getFinalX(), mScroller.getFinalY(), dx, dy);
+        invalidate();
+    }
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (disallowIntercept){
+        if (disallowIntercept) {
             return super.dispatchTouchEvent(ev);
         }
+
+        detector.onTouchEvent(ev);
+
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
         switch (action) {
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -272,6 +302,7 @@ public class OverScrollLayout extends RelativeLayout {
                 oldX = 0;
                 break;
             case MotionEvent.ACTION_DOWN:
+                flingRunnable.abort();
                 downY = ev.getY();
                 oldY = 0;
                 dealtY = mScroller.getCurrY();
@@ -300,6 +331,7 @@ public class OverScrollLayout extends RelativeLayout {
                 break;
 
             case MotionEvent.ACTION_MOVE:
+
                 if (!canOverScroll()) {
                     return super.dispatchTouchEvent(ev);
                 }
@@ -449,8 +481,12 @@ public class OverScrollLayout extends RelativeLayout {
     }
 
     private float getDealt(float dealt, float distance) {
-        float temp = dealt * (1.5f - fraction - Math.abs(distance) / baseOverScrollLength) / 3;
-        return temp;
+        if (dealt * distance < 0)
+            return dealt;
+        //x 为0的时候 y 一直为0, 所以当x==0的时候,给一个0.1的最小值
+        float x = (float) Math.min(Math.max(Math.abs(distance), 0.1) / Math.abs(baseOverScrollLength), 1);
+        float y = Math.min(new AccelerateInterpolator(0.15f).getInterpolation(x), 1);
+        return dealt * (1 - y);
     }
 
     private MotionEvent resetVertical(MotionEvent event) {
@@ -612,5 +648,96 @@ public class OverScrollLayout extends RelativeLayout {
             return checkListener.canScrollRight();
         }
         return ViewCompat.canScrollHorizontally(child, 1);
+    }
+
+    private void startOverScrollAim(float currVelocity) {
+        float speed = currVelocity / configuration.getScaledMaximumFlingVelocity();
+        if (canOverScrollVertical) {
+            if (!canChildScrollUp()) {
+                overScrollRunnable.start(0, -speed);
+            } else {
+                overScrollRunnable.start(0, speed);
+            }
+        } else {
+            if (canChildScrollRight()) {
+                overScrollRunnable.start(-speed, 0);
+            } else {
+                overScrollRunnable.start(speed, 0);
+            }
+        }
+    }
+
+    private class OverScrollRunnable implements Runnable {
+
+        private static final long DELAY_TIME = 20;
+        private long duration = 160;
+        private float speedX, speedY;
+        private long timePass;
+        private long startTime;
+        private int distanceX, distanceY;
+
+        public void start(float speedX, float speedY) {
+            this.speedX = speedX;
+            this.speedY = speedY;
+            startTime = System.currentTimeMillis();
+            run();
+        }
+
+        @Override
+        public void run() {
+            timePass = System.currentTimeMillis() - startTime;
+            if (timePass < duration) {
+                distanceY = (int) (DELAY_TIME * speedY);
+                distanceX = (int) (DELAY_TIME * speedX);
+                mSmoothScrollBy(distanceX, distanceY);
+                postDelayed(this, DELAY_TIME);
+            } else if (timePass > duration) {
+                mSmoothScrollTo(0, 0);
+            }
+        }
+    }
+
+    private class FlingRunnable implements Runnable {
+        private static final long DELAY_TIME = 40;
+        private boolean abort;
+        private int mMinimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
+
+        public void start(float velocityX, float velocityY) {
+            abort = false;
+            float velocity = canOverScrollVertical ? velocityY : velocityX;
+            flingScroller.fling(0, 0, 0, (int) velocity, 0, 0,
+                    Integer.MIN_VALUE, Integer.MAX_VALUE);
+            postDelayed(this, 40);
+        }
+
+        @Override
+        public void run() {
+            if (!abort && flingScroller.computeScrollOffset()) {
+                boolean scrollEnd = false;
+                if (canOverScrollVertical) {
+                    scrollEnd = !canChildScrollDown() || !canChildScrollUp();
+                } else {
+                    scrollEnd = !canChildScrollLeft() || !canChildScrollRight();
+                }
+
+                float currVelocity = flingScroller.getCurrVelocity();
+                if (scrollEnd) {
+                    if (currVelocity > mMinimumFlingVelocity) {
+                        startOverScrollAim(currVelocity);
+                    }
+                } else {
+                    if (currVelocity > mMinimumFlingVelocity) {
+                        postDelayed(this, DELAY_TIME);
+                    }
+                }
+
+            }
+
+
+        }
+
+        public void abort() {
+            abort = true;
+        }
     }
 }

@@ -61,7 +61,7 @@ public class ListViewActivity extends AppCompatActivity {
     class MyAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return 20;
+            return 100;
         }
 
         @Override

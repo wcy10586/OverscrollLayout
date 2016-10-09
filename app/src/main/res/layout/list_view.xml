@@ -6,8 +6,8 @@
     android:background="@android:color/holo_blue_bright"
     android:orientation="vertical">
 
-    <ListView
+    <com.wcy.overscrolllayout.MyListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"></com.wcy.overscrolllayout.MyListView>
 </com.wcy.overscroll.OverScrollLayout>

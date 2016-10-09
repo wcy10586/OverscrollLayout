@@ -24,14 +24,14 @@ public class MyActivity extends Activity {
         setContentView(R.layout.my_layout);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(new MyAdapter());
-        WebView webView = (WebView)findViewById(R.id.webView);
-        webView.loadUrl("http://www.2cto.com/kf/201508/435091.html");
+//        WebView webView = (WebView)findViewById(R.id.webView);
+//        webView.loadUrl("http://www.2cto.com/kf/201508/435091.html");
     }
 
     class MyAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return 200;
+            return 100;
         }
 
         @Override
