@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.wcy.overscrolllayout.MainActivity">
+    <item
+        android:id="@+id/linear"
+        android:orderInCategory="100"
+        android:title="listView"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/grid"
+        android:orderInCategory="100"
+        android:title="gridView"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/stagger"
+        android:orderInCategory="100"
+        android:title="staggerGridView"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/linear1"
+        android:orderInCategory="100"
+        android:title="horizontalListView"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/grid1"
+        android:orderInCategory="100"
+        android:title="horizontalGridView"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/stagger1"
+        android:orderInCategory="100"
+        android:title="horizontalStaggerGridView"
+        app:showAsAction="never" />
+</menu>
